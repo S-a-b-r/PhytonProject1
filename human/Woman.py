@@ -11,7 +11,9 @@ class Woman(Human): #Родитель в скабках
     def reproduce(fother = None, mother = None):
         if fother and mother and fother.sex == 'male' and mother.sex == 'female':
             print('Можно размножаться')
-            return Human()
+            if random.randint(0,1) == 0:
+                return Human()
+            return Woman()
         print('Размножаться нельзя')
         return None
     
@@ -19,3 +21,4 @@ class Woman(Human): #Родитель в скабках
         self.money -= random.randint(0, 10)
         self.happiness += random.randint(0,10)
         print(self.name + ' пробежалась по магазинчикам <3')
+        return self.happiness

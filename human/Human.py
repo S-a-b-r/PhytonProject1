@@ -15,6 +15,7 @@ class Human:
 
     def getName(self):
         print( self.sex + ' ' + self.name + ' ' + self.soname)
+        return self.name
     
     def eat(self):
         if self.money > 0:
@@ -23,12 +24,14 @@ class Human:
             print(self.name +' '+  self.soname + ' покушаль. Осталось денег:' + str(self.money) + ' Здоровье:' + str(self.stamina))
         else:
             print('Нет денег! Пора идти на работу =( ')
+        return self.stamina
 
     def work(self):
         self.money += 5
         self.happiness -= 5
         self.stamina -= 10
         print('Пятилетку в четыре года! Рабочий день ' + self.name + ' завершен')
+        return self.money
 
     def fishing(self):
         if(self.sex == 'male'):
@@ -39,3 +42,4 @@ class Human:
         else:
             self.happiness -= 5
             print(' Лучше бы прошлась по магазинам...') #Тупа сексизм)
+        return self.happiness

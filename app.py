@@ -13,4 +13,20 @@ a.fishing()
 b.shopping()
 b.fishing()
 
-print(b.money)
+def pow(power):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            i = 0
+            result = 1
+            while i < power:
+                result *= func(*args, **kwargs)
+                i+=1
+            return result
+        return wrapper
+    return decorator
+
+@pow(3)
+def add( a, b, c):
+    return a + b + c
+
+print(add(1,2,7))
