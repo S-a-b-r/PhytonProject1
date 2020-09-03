@@ -2,7 +2,7 @@ from human.Human import Human
 from human.Woman import Woman
 
 a = Human('Вован', 'Князев', 35)
-b = Woman('Настя', 'Аитова', 18)
+b = Woman('Катя', 'Аитова', 18)
 
 a.work()
 a.eat()
@@ -12,6 +12,7 @@ b.work()
 a.fishing()
 b.shopping()
 b.fishing()
+c = b.reproduce(a,b)
 
 def pow(power):
     def decorator(func):

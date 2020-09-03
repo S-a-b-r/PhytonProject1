@@ -4,6 +4,7 @@ import random
 class Woman(Human): #Родитель в скабках
     def __init__(self, name = 'Christopher', soname = 'Pratt', age = 18, money = 0):
         super().__init__(name, soname, age, money)
+        self.name = 'Настя'
         self.sex = 'female'
         self.stamina = 100
 
