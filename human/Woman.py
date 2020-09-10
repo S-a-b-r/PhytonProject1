@@ -23,3 +23,8 @@ class Woman(Human): #Родитель в скабках
         self.happiness += random.randint(0,10)
         print(self.name + ' пробежалась по магазинчикам <3')
         return self.happiness
+    
+    def fishing(self):
+        self.happiness -= 5
+        print(' Лучше бы прошлась по магазинам...') #Тупа сексизм)
+        return self.happiness

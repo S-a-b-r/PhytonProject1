@@ -34,12 +34,8 @@ class Human:
         return self.money
 
     def fishing(self):
-        if(self.sex == 'male'):
-            self.money -= random.randint(0, 10)
-            self.stamina -= random.randint(0, 10)
-            self.happiness += random.randint(0, 50)
-            print(' У ' + self.name + ' рыбалочка удалась на славу')
-        else:
-            self.happiness -= 5
-            print(' Лучше бы прошлась по магазинам...') #Тупа сексизм)
+        self.money -= random.randint(0, 10)
+        self.stamina -= random.randint(0, 10)
+        self.happiness += random.randint(0, 50)
+        print(' У ' + self.name + ' рыбалочка удалась на славу')
         return self.happiness

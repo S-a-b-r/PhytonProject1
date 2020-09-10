@@ -1,6 +1,9 @@
 from human.Human import Human
 from human.Woman import Woman
+import Equation
 
+e = Equation.Equation()
+print(e.equation(2, 1, 3))
 a = Human('Вован', 'Князев', 35)
 b = Woman('Катя', 'Аитова', 18)
 
@@ -13,6 +16,7 @@ a.fishing()
 b.shopping()
 b.fishing()
 c = b.reproduce(a,b)
+
 
 def pow(power):
     def decorator(func):
