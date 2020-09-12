@@ -43,6 +43,12 @@ class DB:
         self.cursor.execute(query)
         return  self.cursor.fetchall()
 
+    @toDict#ДОПИЛИТЬ В ДЗ!
+    def getTestResultsForADate(self, date):
+        query = "SELECT id, name, result, date_time FROM tests ORDER BY date_time"
+        self.cursor.execute(query)
+        return  self.cursor.fetchall()
+
     #Добавить один результат теста в БД
     def insertTestResult(self, name, result):
         query = "INSERT INTO tests (name, result, date_time) VALUES (%s, %s, now())"
