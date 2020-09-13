@@ -19,7 +19,7 @@ class DB:
             self.connect = psycopg2.connect(
                 database = "unique_original_db",
                 user = "unique_original_user",
-                password = "jktym555",
+                password = "123456",#Так, вот тут не забыть)
                 host = "127.0.0.1",
                 port = "5432"
             )
@@ -45,7 +45,7 @@ class DB:
 
     @toDict#ДОПИЛИТЬ В ДЗ!
     def getTestResultsForADate(self, date):
-        query = "SELECT id, name, result, date_time FROM tests ORDER BY date_time"
+        query = "SELECT * FROM tests WHERE date_time BETWEEN '%s 00:00:00' AND '%s 23:59:59'" % (date, date)
         self.cursor.execute(query)
         return  self.cursor.fetchall()
 

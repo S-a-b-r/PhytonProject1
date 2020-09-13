@@ -5,7 +5,9 @@ from db.DB import DB
 
 #Создать экземпляр БД
 db = DB()
-tests = db.getTestResults() #Получили данные тестов
+#tests = db.getTestResultsForADate("2020-09-13") #Получаем данные за определенное число
+tests = db.getTestResults()#Получаем данные всех тестов
+
 
 #Создаем документ
 workbook = xlsxwriter.Workbook('example.xlsx')#Создаем документ
