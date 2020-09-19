@@ -1,6 +1,8 @@
 from human.Human import Human
 from human.Woman import Woman
 import Equation
+import time
+from threading import Thread
 
 e = Equation.Equation()
 print(e.equation(2, 1, 3))
@@ -34,4 +36,23 @@ def pow(power):
 def add( a, b, c):
     return a + b + c
 
-print(add(1,2,7))
+def someFunc1():
+    for i in range(10):
+        print('Первый поток', i)
+        time.sleep(1)
+
+def someFunc2():
+    i = 0
+    while True:
+        print('Второй поток', i)
+        i += 1
+        time.sleep(0.5)
+
+thread1 = Thread(target=someFunc1, daemon= True)
+thread1.start()
+
+thread2 = Thread(target=someFunc2, daemon= True)
+thread2.start()
+
+print('Что-то еще хочу сделать')
+time.sleep(10)

@@ -19,7 +19,7 @@ class DB:
             self.connect = psycopg2.connect(
                 database = "unique_original_db",
                 user = "unique_original_user",
-                password = "123456",#Так, вот тут не забыть)
+                password = "jktym555",#Так, вот тут не забыть)
                 host = "127.0.0.1",
                 port = "5432"
             )
