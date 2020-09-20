@@ -1,0 +1,6 @@
+.pytest_cache/*
+*.log
+*.xlsx
+.vscode/*
+.idea/*
+__pycache__/*
