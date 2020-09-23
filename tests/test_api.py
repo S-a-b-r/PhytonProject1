@@ -4,6 +4,9 @@ import pytest
 import urllib
 
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 #Декоратор, измеряющий время
@@ -22,9 +25,17 @@ class TestRebelStar:
     def setup_class(self):
         self.domain = 'https://rebelstar.ru/'
         self.timeout = 3.0 # В секундах
-        self.DRIVER_CHROME_PATH = 'C:/Program Files/Google/Chrome/Application/chromedriver.exe'
-        self.DRIVER_MOZILLA_PATH = 'C:/Program Files/Mozilla Firefox/geckodriver.exe'
-        self.DRIVER_EDGE_PATH = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedgedriver.exe'
+        DRIVER_PATH_CHROME = 'C:/Program Files/Google/Chrome/Application/chromedriver.exe'
+        DRIVER_PATH_MOZILLA = 'C:/Program Files/Mozilla Firefox/geckodriver.exe'
+        DRIVER_PATH_EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedgedriver.exe'
+        self.firefox = webdriver.Firefox(executable_path = DRIVER_PATH_MOZILLA)
+        #self.chrome = webdriver.Chrome(executable_path = DRIVER_PATH_CHROME)
+        self.edge = webdriver.Edge(executable_path= DRIVER_PATH_EDGE)
+
+    def teardown_class(self):
+        self.firefox.close()
+        #self.chrome.close()
+        self.edge.close()
 
     @benchmark
     def callUrl(self, part = None, params = None):
@@ -72,57 +83,67 @@ class TestRebelStar:
         result = self.callUrl(part, dict(raider = raider, operative = operative, fog = fog))
         assert result.status_code == 404
 
+
     #rs - номер игры(1 часть или 2 часть игры)
-    @pytest.mark.parametrize("rs, raider, operativeOrAlien, fog",[
-        (1,True, True, True), (2 ,True, True, True),
-        (1, True, True, False), (2, True, True, False),#(1, True, False, True),(1, False, True, True),
-        #(1, True, False, False), (1, False, True, False), (1, False, False, True),
-        #(1, False, False, False)
+    @pytest.mark.parametrize(" driverName, rs, raider, operativeOrAlien, fog",[
+        ('edge', 1, True, True, True),
+        ('edge', 1,  True, True, False),  ('edge',1, True, False, True),  ('edge',1, False, True, True),
+        ('edge', 1,  True, False, False), ('edge',1, False, True, False), ('edge',1, False, False, True),
+        ('edge', 1,  False, False, False),
+        ('edge', 1, True, True, True),
+        ('edge', 2,  True, True, False),  ('edge',2, True, False, True),  ('edge',2, False, True, True),
+        ('edge', 2,  True, False, False), ('edge',2, False, True, False), ('edge',2, False, False, True),
+        ('edge', 2,  False, False, False),
+        ('firefox', 1, True, True, True),
+        ('firefox', 1,  True, True, False),  ('firefox',1, True, False, True),  ('firefox',1, False, True, True),
+        ('firefox', 1,  True, False, False), ('firefox',1, False, True, False), ('firefox',1, False, False, True),
+        ('firefox', 1,  False, False, False),
+        ('firefox', 1, True, True, True),
+        ('firefox', 2,  True, True, False),  ('firefox',2, True, False, True),  ('firefox',2, False, True, True),
+        ('firefox', 2,  True, False, False), ('firefox',2, False, True, False), ('firefox',2, False, False, True),
+        ('firefox', 2,  False, False, False)
         ])
-    def test_rbModes(self, rs, raider, operativeOrAlien, fog):
-        #driver = webdriver.Firefox(executable_path = self.DRIVER_MOZILLA_PATH)
-        #driver = webdriver.Chrome(executable_path = self.DRIVER_CHROME_PATH)
-        driver = webdriver.Edge(executable_path= self.DRIVER_EDGE_PATH)
+    def test_rbModes(self, driverName, rs, raider, operativeOrAlien, fog):
+        driver = self.__getattribute__(driverName)
+
         driver.get(self.domain)
-        try:
-            assert "Rebel Star" in driver.title
-            #Включаем чекбоксы
-            if raider:
-                driver.execute_script("document.getElementById('rs%s-ai1').checked = true" % (rs) )
-            if operativeOrAlien:
-                driver.execute_script("document.getElementById('rs%s-ai2').checked = true" % (rs) )
-            if fog:
-                driver.execute_script("document.getElementById('rs%s-fog').checked = true" % (rs))
 
-            #Перейти к игре
-            button = driver.find_element_by_id('imgRS%s' % (rs))
-            button.click()
+        assert "Rebel Star" in driver.title
+        #Включаем чекбоксы
+        if raider:
+            driver.execute_script("document.getElementById('rs%s-ai1').checked = true" % (rs) )
+        if operativeOrAlien:
+            driver.execute_script("document.getElementById('rs%s-ai2').checked = true" % (rs) )
+        if fog:
+            driver.execute_script("document.getElementById('rs%s-fog').checked = true" % (rs))
 
-            urlParse = urllib.parse.urlparse(driver.current_url)
-            if rs == 1:
-                query = urllib.parse.urlencode(dict(raider = raider, operative = operativeOrAlien, fog = fog)).lower()
-            else:
-                query = urllib.parse.urlencode(dict(raider = raider, alien = operativeOrAlien, fog = fog)).lower()
+        #Перейти к игре
+        button = driver.find_element_by_id('imgRS%s' % (rs))
+        button.click()
 
-            assert urlParse.query == query
-        finally:
-            driver.close()
+        urlParse = urllib.parse.urlparse(driver.current_url)
+        if rs == 1:
+            query = urllib.parse.urlencode(dict(raider = raider, operative = operativeOrAlien, fog = fog)).lower()
+        else:
+            query = urllib.parse.urlencode(dict(raider = raider, alien = operativeOrAlien, fog = fog)).lower()
 
-    @pytest.mark.parametrize("words, href",[
-        ('известной','https://en.wikipedia.org/wiki/Rebelstar'), ('Играть', 'https://rebelstar.ru/#two'),
-        ('Описание', 'https://rebelstar.ru/#three'),('Tomoko','https://www.artstation.com/tdblacksun'),
-        ('Howler','https://howlerjs.com/'), ('EasyStar', 'https://easystarjs.com/'),
-        ('html5up.net','https://html5up.net/')
+        assert urlParse.query == query
+
+
+    @pytest.mark.parametrize("driverName, words, href",[
+        ('edge','известной','https://en.wikipedia.org/wiki/Rebelstar'), ('edge','Играть', 'https://rebelstar.ru/#two'),
+        ('edge','Описание', 'https://rebelstar.ru/#three'),             ('edge','Tomoko','https://www.artstation.com/tdblacksun'),
+        ('edge','Howler','https://howlerjs.com/'),                      ('edge','EasyStar', 'https://easystarjs.com/'),
+        ('edge','html5up.net','https://html5up.net/'),
+        ('firefox','известной','https://en.wikipedia.org/wiki/Rebelstar'), ('firefox','Играть', 'https://rebelstar.ru/#two'),
+        ('firefox','Описание', 'https://rebelstar.ru/#three'),             ('firefox','Tomoko','https://www.artstation.com/tdblacksun'),
+        ('firefox','Howler','https://howlerjs.com/'),                      ('firefox','EasyStar', 'https://easystarjs.com/'),
+        ('firefox','html5up.net','https://html5up.net/'),
         ])
-    def test_href(self, words, href):
-        driver = webdriver.Edge(executable_path= self.DRIVER_EDGE_PATH)
+    def test_href(self,driverName, words, href):
+        driver = self.__getattribute__(driverName)
         driver.get(self.domain)
-        try:
-            firstHref = driver.find_element_by_link_text(words).get_attribute('href')
-            driver.get(firstHref)
-            
-            assert driver.current_url == href
-
-            time.sleep(2)
-        finally:
-            driver.quit()
+        firstHref = driver.find_element_by_link_text(words).get_attribute('href')
+        driver.get(firstHref)
+        
+        assert driver.current_url == href

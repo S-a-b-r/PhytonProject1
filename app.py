@@ -1,58 +1,40 @@
-from human.Human import Human
-from human.Woman import Woman
+from aiohttp import web
 import Equation
-import time
-from threading import Thread
 
-e = Equation.Equation()
-print(e.equation(2, 1, 3))
-a = Human('Вован', 'Князев', 35)
-b = Woman('Катя', 'Аитова', 18)
+equation = Equation.Equation()
+app = web.Application()
 
-a.work()
-a.eat()
-b.work()
-b.work()
-b.work()
-a.fishing()
-b.shopping()
-b.fishing()
-c = b.reproduce(a,b)
+def testHandler(request):
+    return web.json_response(dict(result = 'ok'))
+
+def staticHandler(request):
+    return web.FileResponse('./public/index.html')
+
+def powHandler(request):
+    value = request.match_info.get('value')
+    pow = request.match_info.get('pow')
+    result = float(value) ** float (pow)
+    return web.json_response(dict(result = result))
+
+def equationHandler(request):
+    return web.json_response(equation.squareEquarion(1,2,3))
 
 
-def pow(power):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            i = 0
-            result = 1
-            while i < power:
-                result *= func(*args, **kwargs)
-                i+=1
-            return result
-        return wrapper
-    return decorator
+def human(request):
+    return web.json_response()
 
-@pow(3)
-def add( a, b, c):
-    return a + b + c
+app.router.add_route('GET', '/test', testHandler)
+app.router.add_route('GET', '/pow/{value}/{pow}',powHandler)
+app.router.add_route('*', '/', staticHandler)
+app.router.add_route('GET', '/equation',equationHandler)
 
-def someFunc1():
-    for i in range(10):
-        print('Первый поток', i)
-        time.sleep(1)
 
-def someFunc2():
-    i = 0
-    while True:
-        print('Второй поток', i)
-        i += 1
-        time.sleep(0.5)
+async def on_startup(app):
+    print('Я родился')
 
-thread1 = Thread(target=someFunc1, daemon= True)
-thread1.start()
+async def on_shutdown(app):
+    print('Я помер')
 
-thread2 = Thread(target=someFunc2, daemon= True)
-thread2.start()
-
-print('Что-то еще хочу сделать')
-time.sleep(10)
+app.on_startup.append(on_startup)
+app.on_shutdown.append(on_shutdown)
+web.run_app(app)
