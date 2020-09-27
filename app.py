@@ -1,33 +1,16 @@
 from aiohttp import web
-import Equation
+from application.equation.Equation import Equation
+from application.router.Router import Router
+from application.socket.Socket import Socket
+import socketio
 
-equation = Equation.Equation()
 app = web.Application()
+sio = socketio.AsyncServer()
+sio.attach(app)
+equation = Equation()
 
-def testHandler(request):
-    return web.json_response(dict(result = 'ok'))
-
-def staticHandler(request):
-    return web.FileResponse('./public/index.html')
-
-def powHandler(request):
-    value = request.match_info.get('value')
-    pow = request.match_info.get('pow')
-    result = float(value) ** float (pow)
-    return web.json_response(dict(result = result))
-
-def equationHandler(request):
-    return web.json_response(equation.squareEquarion(1,2,3))
-
-
-def human(request):
-    return web.json_response()
-
-app.router.add_route('GET', '/test', testHandler)
-app.router.add_route('GET', '/pow/{value}/{pow}',powHandler)
-app.router.add_route('*', '/', staticHandler)
-app.router.add_route('GET', '/equation',equationHandler)
-
+Router(app,web)
+Socket(sio)
 
 async def on_startup(app):
     print('Я родился')
