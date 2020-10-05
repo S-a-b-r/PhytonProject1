@@ -17,7 +17,6 @@ document.getElementById('joinToRoom').onclick = function(){
         activeRoom = roomName;
     }
 }
-
 document.getElementById('leaveRoom').onclick = function(){
     const roomName = document.getElementById('roomName').value;
     if(roomName){
@@ -34,29 +33,23 @@ function getRoomMessagesHandler(data){
         });
     }
 }
-
 function messageHandler(data){
     const {userName, message} = data;
     document.getElementById('chat').innerHTML += `<b>${userName ? userName:'NoName'}</b>: ${message}<br>`;
+
 }
 
 function joinToRoomHandler(data){
     if(data){
         document.getElementById('chat').innerHTML ='';
-        const roomName = document.getElementById('roomName').value;
-        document.getElementById('chatName').innerHTML = `Чат комнаты ${roomName}`;
     }
     console.log('Прицепился к комнате', data);
 }
-
-function leaveRoomHandler(data){
-    document.getElementById('chat').innerHTML ='';
-    document.getElementById('chatName').innerHTML = 'Общий чатик';
+function leaveToomHandler(data){
     console.log('Вышел из комнаты', data);
 }
 
-
 socket.on('getRoomMessages', getRoomMessagesHandler);
 socket.on('joinToRoom', joinToRoomHandler);
-socket.on('leaveRoom', leaveRoomHandler);
+socket.on('leaveRoom', leaveToomHandler);
 socket.on('message', messageHandler);

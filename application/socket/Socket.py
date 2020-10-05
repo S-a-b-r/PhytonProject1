@@ -23,7 +23,7 @@ class Socket:
             roomName = data['roomName']
             if roomName:
                 userName = data['userName']
-                message = data['message']
+                message= data['message']
                 messages[roomName].append(dict(userName = userName, message = message))
                 await sio.emit('message', room = roomName, data = dict(userName = userName, message = message))
 
