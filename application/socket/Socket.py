@@ -23,7 +23,7 @@ class Socket:
             roomName = data['roomName']
             if roomName:
                 userName = data['userName']
-                message= data['message']
+                message = data['message']
                 messages[roomName].append(dict(userName = userName, message = message))
                 await sio.emit('message', room = roomName, data = dict(userName = userName, message = message))
             else:
@@ -33,7 +33,7 @@ class Socket:
         @sio.event
         async def joinToRoom(sid, data):
             roomName = data['roomName']
-            sio.enter_room(sid, roomName )
+            sio.enter_room(sid, roomName)
             if not(roomName in messages):
                 messages[roomName] = []
             await sio.emit('joinToRoom', room = sid, data = True)
